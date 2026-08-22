@@ -185,3 +185,15 @@ docker run --rm -p 8501:8501 resume-screener:local
 ```
 
 Retraining still requires the external datasets described above. The manifest separates the committed model version from future retraining runs so new artifacts can be compared without silently changing the deployed inference contract.
+
+
+### Stage 2 retraining
+
+The documented Stage 2 pipeline can be rerun from a local export of `batuhanmtl/job_resume_fit`:
+
+```bash
+python scripts/train_stage2.py --csv job_resume_fit.csv --output-dir artifacts/stage2
+python scripts/record_run.py --artifact-dir artifacts/stage2 --metrics artifacts/stage2/metrics.json
+```
+
+The script reproduces the notebook’s seed-42 synthetic cross-category negative-pair construction, eight-feature suitability contract, Gradient Boosting configuration, saved vectorizers, and held-out MAE/R² report. The generated `run_manifest.json` records the git revision, UTC timestamp, artifact SHA-256 hashes, and metrics so runs can be compared without silently replacing the deployed artifacts. Synthetic negative-pair scores remain heuristic labels; they are reported separately from the real dataset rows.
