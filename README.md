@@ -164,3 +164,24 @@ embed_model = SentenceTransformer('all-MiniLM-L6-v2')
 - Recreate `skill_string_match_score` and `fuzzy_match_score` from scratch with a documented formula, rather than relying on the original dataset's black-box versions
 - Expand the resume dataset (more categories, more samples per category) to push Stage 1 accuracy past the current data-limited ceiling
 - Feed Stage 1's predicted category into Stage 2 as an explicit feature for a brand-new (unlabeled) resume, rather than only using it at inference time for display
+
+
+## Reproducibility and model lifecycle
+
+The committed `.pkl` files are the versioned inference artifacts used by the deployed app. Their pipeline metadata is recorded in [`model_manifest.json`](model_manifest.json), including the training seed, dataset sources, feature contract, artifact names, and reported metrics.
+
+Verify the artifacts and run a deterministic smoke inference locally:
+
+```bash
+pip install -r requirements.txt
+python scripts/verify_artifacts.py
+```
+
+The same check runs on every push and pull request through [`.github/workflows/verify.yml`](.github/workflows/verify.yml). The Docker image preserves the current Streamlit entrypoint:
+
+```bash
+docker build -t resume-screener:local .
+docker run --rm -p 8501:8501 resume-screener:local
+```
+
+Retraining still requires the external datasets described above. The manifest separates the committed model version from future retraining runs so new artifacts can be compared without silently changing the deployed inference contract.

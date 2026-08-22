@@ -1,0 +1,30 @@
+{
+  "project": "Resume Screener",
+  "pipeline_version": "2026-08-22-stage2-v1",
+  "python": "3.11",
+  "training_seed": 42,
+  "stage_1": {
+    "artifact": "category_classifier.pkl",
+    "vectorizer": "tfidf_vectorizer.pkl",
+    "classes": 20,
+    "reported_accuracy": 0.68,
+    "dataset_size": 2484
+  },
+  "stage_2": {
+    "artifact": "suitability_model.pkl",
+    "vectorizers": ["suitability_vectorizer.pkl", "skill_vectorizer.pkl"],
+    "features": ["skill_overlap_ratio", "skill_overlap_count", "length_ratio", "text_similarity", "skill_text_similarity", "embedding_similarity", "skill_string_match_score", "fuzzy_match_score"],
+    "reported_mae": 8.69,
+    "reported_r2": 0.814,
+    "dataset_size": 2385,
+    "negative_examples": "synthetic cross-category pairs, seed 42"
+  },
+  "reproducibility": {
+    "dataset_sources": [
+      "https://www.kaggle.com/datasets/snehaanbhawal/resume-dataset",
+      "https://huggingface.co/datasets/batuhanmtl/job_resume_fit"
+    ],
+    "training_notebook": "resume_screener.ipynb",
+    "note": "The committed model artifacts are the reproducible inference contract; retraining requires the external datasets documented in README.md."
+  }
+}
